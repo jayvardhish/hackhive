@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake AI - Sign Up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #0b1f3a, #020b18);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 20px 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #66e0ff;
+        }
+
+        .header img {
+            height: 35px;
+            cursor: pointer;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: calc(100vh - 80px);
+            padding: 40px 100px;
+            gap: 40px;
+        }
+
+        .form-box {
+            width: 440px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 12px;
+        }
+
+        .form-box h2 {
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+
+        .form-box p {
+            color: #a8c4d8;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(7, 26, 45, 0.5);
+            border: 1px solid #123;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .bottom-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #a8c4d8;
+        }
+
+        .bottom-text a {
+            color: #00c6ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .visual-box {
+            flex: 1;
+            text-align: center;
+        }
+
+        .visual-box h1 {
+            font-size: 42px;
+            margin-bottom: 5px;
+        }
+
+        .visual-box p {
+            color: #00c6ff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .image-container img {
+            width: 100%;
+            /* border-radius: 50% 50% 40% 40%; */
+            /* border: 1px solid rgba(0, 198, 255, 0.3); */
+        }
+
+        @media(max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                padding: 40px 20px;
+                overflow-y: auto;
+                height: auto;
+            }
+
+            .visual-box {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="images/logo.png" alt="Logo" onclick="window.location.href='index.html'">
+    </div>
+
+    <div class="container">
+        <div class="form-box">
+            <h2>Sign Up for Deepfake AI</h2>
+            <p>Create your account to protect against deepfakes.</p>
+
+            <form id="signupForm">
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="name" placeholder="Full Name" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="Email Address" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                </div>
+
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+
+            <script>
+                document.getElementById('signupForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('email').value;
+                    localStorage.setItem('currentUser', email);
+                    window.location.href = 'dashboard.html';
+                });
+            </script>
+
+            <div class="bottom-text">
+                Already have an account? <a href="login.html">Log In</a>
+            </div>
+        </div>
+
+        <div class="visual-box">
+            <h1>Is it Real?</h1>
+            <p>Sign Up for Deepfake Detection</p>
+            <div class="image-container">
+                <img src="images/img3.png" alt="Real vs Fake">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake AI - Analysis Dashboard</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #071021;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #6fffe9;
+            cursor: pointer;
+        }
+
+        .logo img {
+            height: 35px;
+            cursor: pointer;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            color: #ff4d4d;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .dashboard-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 20px;
+        }
+
+        .header-content {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header-content h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .header-content h1 span {
+            color: #00d4ff;
+        }
+
+        .header-content p {
+            color: #9fb3c8;
+            font-size: 17px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #a8c4d8;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .upload-card,
+        .text-card {
+            width: 100%;
+            max-width: 900px;
+            padding: 60px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.01);
+            transition: 0.3s;
+        }
+
+        .upload-card {
+            cursor: pointer;
+        }
+
+        .upload-card:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.02);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            color: #00d4ff;
+            margin-bottom: 25px;
+        }
+
+        .upload-card h3,
+        .text-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .upload-card p {
+            color: #8a9bb3;
+            margin-bottom: 30px;
+        }
+
+        .text-card p {
+            color: #8a9bb3;
+            margin-bottom: 20px;
+        }
+
+        .text-area-box {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            padding: 20px;
+            font-size: 16px;
+            resize: none;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .text-area-box:focus {
+            border-color: #00d4ff;
+        }
+
+        .select-btn,
+        .analyze-btn {
+            padding: 12px 30px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Processing State */
+        #processing {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 212, 255, 0.1);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Result Card */
+        #resultCard {
+            display: none;
+            margin-top: 30px;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .result-head {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result-sub {
+            color: #a8c4d8;
+            margin-bottom: 20px;
+        }
+
+        .reset-btn {
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        // Login check
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="images/logo.png" alt="Logo">
+        </div>
+        <div class="user-profile">
+            <span id="userDisp">User Account</span>
+            <span class="logout-btn" onclick="logout()">Logout</span>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="header-content">
+            <h1>Detection<span> Dashboard</span></h1>
+            <p>Select your media type and upload for instant AI analysis.</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="setTab('video', this)"><i data-lucide="video"></i> Video</button>
+            <button class="tab-btn" onclick="setTab('image', this)"><i data-lucide="image"></i> Image</button>
+            <button class="tab-btn" onclick="setTab('audio', this)"><i data-lucide="mic"></i> Audio</button>
+            <button class="tab-btn" onclick="setTab('text', this)"><i data-lucide="file-text"></i> Text</button>
+        </div>
+
+        <div class="upload-card" id="dropArea" onclick="document.getElementById('fileInput').click()">
+            <i data-lucide="upload-cloud" class="upload-icon"></i>
+            <h3>Upload <span id="modeName">Video</span> for Analysis</h3>
+            <p>Drag and drop your file here, or click to browse</p>
+            <input type="file" id="fileInput" hidden onchange="processFile(this.files[0])">
+            <button class="select-btn">Select File</button>
+        </div>
+
+        <div class="text-card hidden" id="textAreaContainer">
+            <i data-lucide="file-text" class="upload-icon"></i>
+            <h3>Enter Text for Analysis</h3>
+            <p>Paste or type the text content you want to scan for AI generation.</p>
+            <textarea class="text-area-box" id="textInput" placeholder="Enter text here..."></textarea>
+            <button class="analyze-btn" onclick="processText()">Start Analysis</button>
+        </div>
+
+        <div id="processing">
+            <div class="spinner"></div>
+            <h3>Scanning for deepfake signatures...</h3>
+            <p style="color: #8a9bb3; margin-top: 10px;">Neural Network V4.2 Engaged</p>
+        </div>
+
+        <div id="resultCard">
+            <div id="resultStatus" class="result-head"></div>
+            <p id="resultConfidence" class="result-sub"></p>
+            <div style="font-size: 14px; color: #666; margin-top: 20px;" id="fileName"></div>
+            <button class="reset-btn" onclick="location.reload()">Start New Analysis</button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Display user email
+        document.getElementById('userDisp').innerText = localStorage.getItem('currentUser');
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        function setTab(mode, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const dropArea = document.getElementById('dropArea');
+            const textAreaContainer = document.getElementById('textAreaContainer');
+            const resultCard = document.getElementById('resultCard');
+            const processing = document.getElementById('processing');
+
+            // Reset UI
+            resultCard.style.display = 'none';
+            processing.style.display = 'none';
+
+            if (mode === 'text') {
+                dropArea.classList.add('hidden');
+                textAreaContainer.classList.remove('hidden');
+            } else {
+                dropArea.style.display = 'block'; // Ensure it's not display:none from previous process
+                dropArea.classList.remove('hidden');
+                textAreaContainer.classList.add('hidden');
+                document.getElementById('modeName').innerText = mode.charAt(0).toUpperCase() + mode.slice(1);
+            }
+        }
+
+        function processFile(file) {
+            if (!file) return;
+
+            document.getElementById('dropArea').style.display = 'none';
+            document.getElementById('processing').style.display = 'block';
+
+            simulateAnalysis(`File: ${file.name}`);
+        }
+
+        function processText() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                alert("Please enter some text.");
+                return;
+            }
+
+            document.getElementById('textAreaContainer').classList.add('hidden');
+            document.getElementById('processing').style.display = 'block';
+
+            simulateAnalysis(`Content: ${text.substring(0, 30)}...`);
+        }
+
+        function simulateAnalysis(label) {
+            setTimeout(() => {
+                document.getElementById('processing').style.display = 'none';
+                document.getElementById('resultCard').style.display = 'block';
+
+                const isFake = Math.random() > 0.6;
+                const status = document.getElementById('resultStatus');
+                const confidence = document.getElementById('resultConfidence');
+
+                status.innerText = isFake ? 'Deepfake Detected' : 'Content Authentic';
+                status.style.color = isFake ? '#ff4d4d' : '#00ff9d';
+                confidence.innerText = `AI confidence score: ${Math.floor(Math.random() * 30 + 70)}%`;
+                document.getElementById('fileName').innerText = label;
+            }, 3000);
+        }
+    </script>
+
+</body>
+
+</html>
